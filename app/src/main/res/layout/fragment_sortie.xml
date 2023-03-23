@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    tools:context=".sortie"
+    >
+
+    <LinearLayout
+        android:layout_width="230dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="15dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/calendarcorner"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Trip to algiers"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:id="@+id/fragname"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="7.05"
+            android:textSize="12sp"
+            android:textColor="#9c9c9c"
+            android:id="@+id/fragtime"
+            />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Friends: "
+                android:textStyle="bold"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ahmed, Imad, Sabri, Wassim, omar , dahman"
+                android:textSize="12sp"
+                android:textColor="#9c9c9c"
+                android:id="@+id/fragfriends"/>
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="?android:attr/borderlessButtonStyle"
+            android:id="@+id/editbutton"
+
+            android:drawableRight="@drawable/ic_baseline_arrow_right_alt_24"
+            android:textColor="#ffffff"
+            android:drawableTint="#ffffff"
+
+            android:text="Edit"
+            android:textAlignment="textStart"
+            android:textAllCaps="false"
+
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:layout_marginTop="20dp"
+
+            android:clickable="true"
+            android:focusable="true"
+            android:background="@drawable/btnedit"
+            android:foreground="?android:selectableItemBackgroundBorderless"
+            />
+
+
+    </LinearLayout>
+
+
+
+</LinearLayout>
