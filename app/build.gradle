@@ -41,4 +41,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     annotationProcessor 'androidx.room:room-compiler:2.4.2'
     implementation 'com.koushikdutta.ion:ion:3.1.0'
+
+    implementation 'com.github.androdocs:Simple-HTTP-Request:v1.0'
 }

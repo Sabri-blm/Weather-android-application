@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -22,6 +23,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.androdocs.httprequest.HttpRequest;
 import com.example.weatherapplication.entité.FragTableDataset;
 import com.example.weatherapplication.viewmodel.MyViewModel;
 import com.google.gson.JsonArray;
@@ -29,8 +31,14 @@ import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -41,18 +49,14 @@ public class MainActivity extends AppCompatActivity {
     //LiveData<List<FragTableDataset>> all;
     //List<FragTableDataset> all_values;
 
-    Button btnSearch;
+    ImageView search;
     EditText etCity;
-    ImageView iconWeather;
-    TextView tvTemp, textDay, tvState, weekly;
-
-    RelativeLayout relativeLay;
-
-    ListView lvDailyWeather;
+    Button btnWeather, btnCalendar;
+    TextView city, country, time, temp, forecast, humidity, min_temp, max_temp, sunrises, sunsets;
 
 
-    String ApiKey = "f77dffe03357c19ac842f8ca72293c8c";
-    float lat,lon;
+    String API = "870909123c0087354bccb2d889d86700";
+    String CITY;
 
     @SuppressLint("MissingInflatedId")
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,20 +93,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // API Manipulation *****************************************
+        // switching between screens *****************************************
 
-
-        // Split Screen
         findViewById(R.id.calendar_layout).setVisibility(View.GONE);
         findViewById(R.id.addnote).setVisibility(View.GONE);
-        relativeLay = findViewById(R.id.relativeLay);
-        relativeLay.setVisibility(View.GONE);
-        weekly = findViewById(R.id.weekly);
-        weekly.setVisibility(View.GONE);
 
-        Button btnWeather = null, btnCalendar = null;
+        //relativeLay.setVisibility(View.GONE);
 
         btnWeather = findViewById(R.id.btnWeather);
+        btnCalendar = findViewById(R.id.btnCalendar);
 
         btnWeather.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,13 +109,9 @@ public class MainActivity extends AppCompatActivity {
                 findViewById(R.id.calendar_layout).setVisibility(View.GONE);
                 findViewById(R.id.addnote).setVisibility(View.GONE);
                 findViewById(R.id.weather_layout).setVisibility(View.VISIBLE);
-                findViewById(R.id.lvDailyWeather).setVisibility(View.VISIBLE);
-                relativeLay.setVisibility(View.VISIBLE);
-                weekly.setVisibility(View.VISIBLE);
+                //relativeLay.setVisibility(View.VISIBLE);
             }
         });
-
-        btnCalendar = findViewById(R.id.btnCalendar);
 
         btnCalendar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,159 +119,98 @@ public class MainActivity extends AppCompatActivity {
                 findViewById(R.id.calendar_layout).setVisibility(View.VISIBLE);
                 findViewById(R.id.addnote).setVisibility(View.VISIBLE);
                 findViewById(R.id.weather_layout).setVisibility(View.GONE);
-                findViewById(R.id.lvDailyWeather).setVisibility(View.GONE);
-                relativeLay.setVisibility(View.GONE);
-                weekly.setVisibility(View.GONE);
+                //relativeLay.setVisibility(View.GONE);
             }
         });
 
 
-        //API for Current Daily Weather
+        // weather layout
 
 
-        btnSearch = findViewById(R.id.btnSearch);
+        search = findViewById(R.id.btnSearch);
         etCity = findViewById(R.id.etCity);
-        iconWeather = findViewById(R.id.iconWeather);
-        tvTemp = findViewById(R.id.tvTemp);
-        tvState = findViewById(R.id.tvState);
-        lvDailyWeather = findViewById(R.id.lvDailyWeather);
 
+        city = (TextView) findViewById(R.id.city);
+        country = (TextView) findViewById(R.id.country);
+        time = (TextView) findViewById(R.id.time);
+        temp = (TextView) findViewById(R.id.temp);
+        forecast = (TextView) findViewById(R.id.forecast);
+        humidity = (TextView) findViewById(R.id.humidity);
+        min_temp = (TextView) findViewById(R.id.min_temp);
+        max_temp = (TextView) findViewById(R.id.max_temp);
+        sunrises = (TextView) findViewById(R.id.sunrises);
+        sunsets = (TextView) findViewById(R.id.sunsets);
 
-        btnSearch.setOnClickListener(new View.OnClickListener() {
+        search.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onClick(View view) {
-
-                String city = etCity.getText().toString();
-                if (city.isEmpty()) {
-                    Toast.makeText(MainActivity.this, "Please enter a city name", Toast.LENGTH_SHORT).show();
-                    relativeLay.setVisibility(View.GONE);
-                } else {
-
-                    // float[] param = nameToParam(city);
-                    loadWeatherByCityName(city);
-                    relativeLay.setVisibility(View.VISIBLE);
-                    weekly.setVisibility(View.VISIBLE);
-
-
-                }
+            public void onClick(View v) {
+                CITY = etCity.getText().toString();
+                new weatherTask().execute();
             }
         });
 
 
     }
 
-    /* private float[] nameToParam(String city) {
 
-        Ion.with(this)
-                .load("http://api.openweathermap.org/geo/1.0/direct?q="+city+"&appid="+ApiKey)
-                .asJsonObject()
-                .setCallback(new FutureCallback<JsonObject>() {
-                    @Override
-                    public void onCompleted(Exception e, JsonObject result) {
-                        // do stuff with the result or error
-                        if (e != null){
-                            e.printStackTrace();
-                            Toast.makeText(MainActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
-                        }
-                        else{
-                            // convert json response to Java
+    class weatherTask extends AsyncTask<String, Void, String> {
 
-                            JsonObject laton = result.get("lat").getAsJsonObject();
-                            JsonObject lonon = result.get("lon").getAsJsonObject();
-
-                            float lat = laton.getAsFloat();
-                            float lon = lonon.getAsFloat();
-
-
-                        }
-                    }
-                });
-
-        return new float[] {lat,lon};
-    }
-    */
-
-        private void loadWeatherByCityName (String city){
-            Ion.with(this)
-                    .load("https://api.openweathermap.org/data/2.5/weather?q=" + city + "&&units=metric&appid=" + ApiKey)
-                    .asJsonObject()
-                    .setCallback(new FutureCallback<JsonObject>() {
-                        @SuppressLint("SetTextI18n")
-                        @Override
-                        public void onCompleted(Exception e, JsonObject result) {
-                            // do stuff with the result or error
-                            if (e != null) {
-                                e.printStackTrace();
-                                Toast.makeText(MainActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
-                            } else {
-
-                                JsonObject main = result.get("main").getAsJsonObject();
-                                double temp = main.get("temp").getAsDouble();
-                                tvTemp.setText(temp + "°C");
-
-                                JsonArray weather = result.get("weather").getAsJsonArray();
-                                String icon = weather.get(0).getAsJsonObject().get("icon").getAsString();
-                                loadIcon(icon);
-
-                                String desc = weather.get(0).getAsJsonObject().get("description").getAsString();
-                                tvState.setText(desc);
-
-                                loadDailyForecast(city);
-
-
-                            }
-
-                        }
-                    });
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
         }
 
-        private void loadDailyForecast (String city){
-            Ion.with(this)
-                    .load("https://api.openweathermap.org/data/2.5/forecast?q=" + city + "&&units=metric&appid=" + ApiKey)
-                    .asJsonObject()
-                    .setCallback(new FutureCallback<JsonObject>() {
-                        @SuppressLint("SetTextI18n")
-                        @Override
-                        public void onCompleted(Exception e, JsonObject result) {
-                            // do stuff with the result or error
-                            if (e != null) {
-                                e.printStackTrace();
-                                Toast.makeText(MainActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
-                            } else {
+        @Override
+        protected String doInBackground(String... strings) {
+            String response = HttpRequest.excuteGet("https://api.openweathermap.org/data/2.5/weather?q=" + CITY + "&units=metric&appid=" + API);
+            return response;
+        }
 
-                                List<Weather> weatherList = new ArrayList<>();
-                                //String timeZone = result.get("timezone").getAsString();
-                                JsonArray list = result.get("list").getAsJsonArray();
-                                for (int i = 3; i < list.size(); i = i + 8) {
-                                    //Long date = list.get(i).getAsJsonObject().get("dt").getAsLong();
-                                    Double temp = list.get(i).getAsJsonObject().get("main").getAsJsonObject().get("temp").getAsDouble();
-                                    String icon = list.get(i).getAsJsonObject().get("weather").getAsJsonArray().get(0).getAsJsonObject().get("icon").getAsString();
+        @Override
+        protected void onPostExecute(String result) {
+            try {
+                JSONObject jsonObj = new JSONObject(result);
+                JSONObject main = jsonObj.getJSONObject("main");
+                JSONObject weather = jsonObj.getJSONArray("weather").getJSONObject(0);
+                JSONObject sys = jsonObj.getJSONObject("sys");
 
-                                    weatherList.add(new Weather(temp, icon));
+                // CALL VALUE IN API :
 
-                                }
+                String city_name = jsonObj.getString("name");
+                String countryname = sys.getString("country");
+                Long updatedAt = jsonObj.getLong("dt");
+                String updatedAtText = "Last Updated at: " + new SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.ENGLISH).format(new Date(updatedAt * 1000));
+                String temperature = main.getString("temp");
+                String cast = weather.getString("description");
+                String humi_dity = main.getString("humidity");
+                String temp_min = main.getString("temp_min");
+                String temp_max = main.getString("temp_max");
+                Long rise = sys.getLong("sunrise");
+                String sunrise = new SimpleDateFormat("hh:mm a", Locale.ENGLISH).format(new Date(rise * 1000));
+                Long set = sys.getLong("sunset");
+                String sunset = new SimpleDateFormat("hh:mm a", Locale.ENGLISH).format(new Date(set * 1000));
 
-                                // attach adapter to ListView
-                                DailyWeatherAdapter dailyWeatherAdapter = new DailyWeatherAdapter(MainActivity.this, weatherList);
+                // SET ALL VALUES IN TEXTBOX :
 
-                                lvDailyWeather.setAdapter(dailyWeatherAdapter);
+                city.setText(city_name);
+                country.setText(countryname);
+                time.setText(updatedAtText);
+                temp.setText(temperature + "°C");
+                forecast.setText(cast);
+                humidity.setText(humi_dity);
+                min_temp.setText(temp_min);
+                max_temp.setText(temp_max);
+                sunrises.setText(sunrise);
+                sunsets.setText(sunset);
 
+            } catch (Exception e) {
 
-                            }
+                Toast.makeText(MainActivity.this, "Error:" + e.toString(), Toast.LENGTH_SHORT).show();
 
-                        }
-
-
-                    });
+            }
 
         }
 
-
-
-    private void loadIcon(String icon) {
-        Ion.with(this)
-                .load("http://openweathermap.org/img/w/"+icon+".png")
-                .intoImageView(iconWeather);
     }
-
 }
