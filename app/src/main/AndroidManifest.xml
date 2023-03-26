@@ -28,6 +28,7 @@
 
         </activity>
         <activity android:name=".SplachScren"
+            android:label="@string/name"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
