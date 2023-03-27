@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.SupportActionModeWrapper;
 
 public class SplachScren extends AppCompatActivity {
 

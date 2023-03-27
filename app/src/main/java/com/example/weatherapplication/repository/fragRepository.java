@@ -6,12 +6,8 @@ import android.os.AsyncTask;
 import com.example.weatherapplication.dao.DAo;
 import com.example.weatherapplication.database.baseDeDonnes;
 import com.example.weatherapplication.entité.FragTableDataset;
-
-import java.nio.channels.AsynchronousByteChannel;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
-import androidx.lifecycle.LiveData;
 
 public class fragRepository {
 
@@ -19,13 +15,12 @@ public class fragRepository {
     private DAo mydao;
 
     public fragRepository(Application app) {
-        // ici on creat database for real
+        // here we create the database for real
         baseDeDonnes db = baseDeDonnes.getInstance(app);
         mydao = db.MyDAo();
-        //mylist = mydao.getallfrag(date);
     }
 
-    // recuperer
+    // retrieve
     public List<FragTableDataset> getMylist(String date) {
         List<FragTableDataset> mylist = mydao.getallfrag(date);
 
@@ -60,10 +55,10 @@ public class fragRepository {
 
     //----------------------------------------------
 
-    // ajouter un object a database
+    // add object to the database
     public void ajouterobject(FragTableDataset objet){
-        //cela block l'app
-        //donc en utilise thread de background
+        //this blocks the app for no reason ( waiting on a response) so
+        //we use a background thread (async class)
         new asynchronAdd(mydao).execute(objet);
     }
 

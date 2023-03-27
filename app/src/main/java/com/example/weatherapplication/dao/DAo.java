@@ -3,8 +3,6 @@ package com.example.weatherapplication.dao;
 import com.example.weatherapplication.entité.FragTableDataset;
 
 import java.util.List;
-
-import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;

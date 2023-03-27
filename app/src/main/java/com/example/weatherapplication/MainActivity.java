@@ -1,42 +1,28 @@
 package com.example.weatherapplication;
 
-import androidx.annotation.NonNull;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androdocs.httprequest.HttpRequest;
-import com.example.weatherapplication.entité.FragTableDataset;
 import com.example.weatherapplication.viewmodel.MyViewModel;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Ion;
 
 import org.json.JSONObject;
-
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 
@@ -44,10 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     CalendarView clndr;
-    //TextView txt;
     AppCompatButton addNote;
-    //LiveData<List<FragTableDataset>> all;
-    //List<FragTableDataset> all_values;
 
     ImageView search;
     EditText etCity;
@@ -55,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     TextView city, country, time, temp, forecast, humidity, min_temp, max_temp, sunrises, sunsets;
 
 
-    String API = "870909123c0087354bccb2d889d86700";
+    String API = "----- YOUR API KEY HERE -----";
     String CITY;
 
     @SuppressLint("MissingInflatedId")
@@ -64,26 +47,25 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         clndr = (CalendarView) findViewById(R.id.calendarid);
-        //txt = (TextView) findViewById(R.id.txt);
         addNote = (AppCompatButton) findViewById(R.id.addnote);
 
+        // line for creating the view model
         MyViewModel viewModel = new ViewModelProvider(this).get(MyViewModel.class);
 
-
+        // var to store the date off the calendar
         String[] dateup = new String[1];
 
-        //dateup[0] = Long.toString(clndr.getDate());
-
+        // we define a OnChangeListener for the calendar ( every time you change the date we save it)
         clndr.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
 
             @Override
             public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
                 String date = year + "/" + month + "/" + dayOfMonth;
-                //txt.setText(date);
                 dateup[0] = date;
             }
         });
 
+        // we define an OnClickListener for the add note button
         addNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -93,33 +75,32 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // switching between screens *****************************************
+        // switching between screens (calendar & weather) *****************************************
 
+        // we start by hidding the calendarand add note button
         findViewById(R.id.calendar_layout).setVisibility(View.GONE);
         findViewById(R.id.addnote).setVisibility(View.GONE);
-
-        //relativeLay.setVisibility(View.GONE);
 
         btnWeather = findViewById(R.id.btnWeather);
         btnCalendar = findViewById(R.id.btnCalendar);
 
+        // the weather button OnClickListener
         btnWeather.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 findViewById(R.id.calendar_layout).setVisibility(View.GONE);
                 findViewById(R.id.addnote).setVisibility(View.GONE);
                 findViewById(R.id.weather_layout).setVisibility(View.VISIBLE);
-                //relativeLay.setVisibility(View.VISIBLE);
             }
         });
 
+        // the calendar button OnClickListener
         btnCalendar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 findViewById(R.id.calendar_layout).setVisibility(View.VISIBLE);
                 findViewById(R.id.addnote).setVisibility(View.VISIBLE);
                 findViewById(R.id.weather_layout).setVisibility(View.GONE);
-                //relativeLay.setVisibility(View.GONE);
             }
         });
 
@@ -141,11 +122,14 @@ public class MainActivity extends AppCompatActivity {
         sunrises = (TextView) findViewById(R.id.sunrises);
         sunsets = (TextView) findViewById(R.id.sunsets);
 
+        // the search button OnClickListener
         search.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
+                // we retrieve the input from the edit text
                 CITY = etCity.getText().toString();
+                // and we execute the asynchrone class
                 new weatherTask().execute();
             }
         });

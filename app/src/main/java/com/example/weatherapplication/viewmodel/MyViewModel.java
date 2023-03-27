@@ -6,10 +6,7 @@ import com.example.weatherapplication.entité.FragTableDataset;
 import com.example.weatherapplication.repository.fragRepository;
 
 import java.util.List;
-
-import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 public class MyViewModel extends AndroidViewModel {
@@ -18,8 +15,6 @@ public class MyViewModel extends AndroidViewModel {
     MutableLiveData<String> Name = new MutableLiveData<String>("");
     MutableLiveData<String> friends = new MutableLiveData<String>("");
     MutableLiveData<Float> time = new MutableLiveData<Float>((float) 0);
-
-    //MutableLiveData<String> date ;
 
     public MyViewModel(Application application) {
         super(application);

@@ -2,13 +2,8 @@ package com.example.weatherapplication;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.HorizontalScrollView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.weatherapplication.entité.FragTableDataset;
@@ -16,13 +11,10 @@ import com.example.weatherapplication.viewmodel.MyViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
-import java.util.Objects;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 
 public class Activity2 extends AppCompatActivity {
@@ -93,8 +85,6 @@ public class Activity2 extends AppCompatActivity {
                 all_values = viewModel.getalldata(date2);
                 sortie a;
 
-
-
                 for(FragTableDataset x : all_values) {
                     a = (sortie) manager.findFragmentByTag(Integer.toString(x.getId()));
                     if (a == null) {
@@ -102,16 +92,7 @@ public class Activity2 extends AppCompatActivity {
                     }
                 }
 
-
                 transaction.commit();
-
-                /*Intent i = new Intent(Activity2.this, Activity2.class);
-                i.putExtra("date", date2);
-                finish();
-                overridePendingTransition(0, 0);
-                startActivity(i);
-                overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);*/
-
             }
         }
     }

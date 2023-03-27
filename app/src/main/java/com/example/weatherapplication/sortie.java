@@ -2,7 +2,6 @@ package com.example.weatherapplication;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.appcompat.widget.AppCompatButton;
@@ -10,14 +9,12 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.weatherapplication.entité.FragTableDataset;
 import com.example.weatherapplication.viewmodel.MyViewModel;
 
 /**
@@ -95,9 +92,6 @@ public class sortie extends Fragment{
         friends.setText(mParam2);
         time.setText(mParam3);
 
-        //tag = getArguments().getInt("Tag");
-
-
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -124,31 +118,18 @@ public class sortie extends Fragment{
                 FragmentManager manager = getFragmentManager();
                 FragmentTransaction transaction = manager.beginTransaction();
 
-
                 sortie frag = (sortie) manager.findFragmentByTag(Integer.toString(this.tag));
-
                 transaction.remove(frag);
 
                 transaction.commit();
-
-
-
-
             }else{
                 if(resultCode == 20){
                     //code to confirm
                     FragmentManager manager = getParentFragmentManager();
                     sortie frag = (sortie) manager.findFragmentByTag(Integer.toString(this.tag));
                     FragmentTransaction transaction = manager.beginTransaction();
-                    //transaction.setReorderingAllowed(false);
-
-                    //transaction.replace(R.id.linearlayoutofhorizantalscroll, frag);
-
 
                     transaction.detach(frag).attach(frag).commit();
-
-
-
                 }
             }
 

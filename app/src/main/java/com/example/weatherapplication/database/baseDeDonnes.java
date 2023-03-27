@@ -9,7 +9,7 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-@Database(entities = {FragTableDataset.class}, version = 6, exportSchema = true)
+@Database(entities = {FragTableDataset.class}, version = 7, exportSchema = true)
 public abstract class baseDeDonnes extends RoomDatabase{
 
     public abstract DAo MyDAo();
@@ -17,7 +17,7 @@ public abstract class baseDeDonnes extends RoomDatabase{
     private static baseDeDonnes instance;
 
     // creating database
-    // si on a version = 2 de db alors(fallbackToDestructiveMigration) cela detruit la db precedente
+    // if we have version = 2 in db so(fallbackToDestructiveMigration) this destroy the old version of the database and create a new one
     public static baseDeDonnes getInstance(Context context){
         if(instance == null){
             synchronized (baseDeDonnes.class){
