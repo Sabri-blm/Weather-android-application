@@ -11,7 +11,7 @@
         android:paddingTop="40dp"
         android:paddingBottom="20dp"
         tools:context="Activity2"
-        android:background="@drawable/back"
+        android:background="@drawable/background"
         >
     <ScrollView
         android:layout_width="match_parent"
